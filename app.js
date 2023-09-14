@@ -11,17 +11,17 @@ app.use(bodyParser.urlencoded({extended : true}));
 app.use(express.json({extended : true}));
 
 const connection = mysql.createConnection({
-    host: 'aulascefet.c8tuthxylqic.sa-east-1.rds.amazonaws.com',
-    user: 'aluno',
-    database: 'aulas_web',
-    password : 'alunoc3f3t',
-  });
+  host: 'aulascefet.c8tuthxylqic.sa-east-1.rds.amazonaws.com',
+  user: 'aluno',
+  database: 'aulas_web',
+  password : 'alunoc3f3t',
+});
 
 
 
-  app.get('/', function (req, res) {
-    res.send('Backend Rafael Adolfo rodando...');
-  });
+app.get('/', function (req, res) {
+  res.send('Backend Rafael Adolfo rodando...');
+});
 
   app.get('/fornecedores', (req, res) => {
     connection.query(
