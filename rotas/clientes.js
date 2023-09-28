@@ -26,15 +26,50 @@ module.exports = (app)=>{
         );
       });
      
-      app.get('/clientes/:id_cliente', (req, res) => {
-        var id_cliente = req.params.id_cliente
+      rotas.get('/clientes_all',  (req, res) => {
+        connection.query(
+          'select * from cliente order by id_cliente desc limit 10 ',
+          (err, results, fields) => {
+            if(err) console.log(err)
+            res.send(results)
+          }
+        );
+      })
+      
+      rotas.get('/clientes_byid/:id_cliente', (req, res) => {
+        var id_cliente = req.params.id_cliente 
         connection.query(
           `select * from cliente where id_cliente = ${id_cliente}`,
           (err, results, fields) => {
             if(err) console.log(err)
-            res.send(results)
-          });
-      });
+            console.log(results)
+            var resultado = {}
+            if(results.length > 0){
+              resultado.id_cliente = results[0].id_cliente
+              resultado.nome = results[0].nome
+              resultado.sobrenome = results[0].sobrenome
+              resultado.email = results[0].email
+              resultado.salario = results[0].salario
+              resultado.data_cadastro = results[0].data_cadastro
+            }
+            
+            res.send(resultado)
+          }
+        );
+      })
+      rotas.get('/clientes_email/:email', (req, res) => {
+        var email = req.params.email 
+        var sql =  `select * from cliente where email = "${email}"`
+        connection.query(
+          sql,
+          (err, results, fields) => {
+            if(err) console.log(err)
+            console.log(results)
+            if(results.length > 0) res.send({existe : true})
+            else res.send({existe : false})
+          }
+        );
+      })
 
       app.post('/clientes',(req,res)=>{
         var nome = req.body.nome

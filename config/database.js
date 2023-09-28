@@ -8,4 +8,12 @@ const connection = mysql.createConnection({
     password : 'alunoc3f3t',
   });
 
+// const connection = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   database: 'aula_bd',
+//   password : 'P@ssw0rd',
+// });
+
+
   module.exports = connection;
