@@ -24,7 +24,7 @@ var corsOptions = {
   optionsSuccessStatus: 200 
 };
 
-app.use(express.static('uploads'))
+app.use(express.static('uploads'));
 app.use(cors());
 
 require('./rotas/fornecedores')(app);
