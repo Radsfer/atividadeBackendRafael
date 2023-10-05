@@ -25,7 +25,7 @@ var corsOptions = {
 };
 
 app.use(express.static('uploads'));
-app.use(cors());
+app.use(cors(corsOptions));
 
 require('./rotas/fornecedores')(app);
 require('./rotas/clientes')(app);
