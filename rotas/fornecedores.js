@@ -11,9 +11,21 @@ module.exports = (app)=>{
         res.send("Nova rota para fornecedores");
     });
 
-    app.get('/fornecedores', (req, res) => {
+    rotas.get('/fornecedores_all', (req, res) => {
+      
         connection.query(
-          'select * from fornecedor',
+          `select * from fornecedor order by id_fornecedor desc limit 10`,
+          (err, results, fields) => {
+            if(err) console.log(err)
+            res.send(results)
+          }
+        );
+      });
+
+      rotas.get('/fornecedores', (req, res) => {
+      
+        connection.query(
+          `select * from fornecedor`,
           (err, results, fields) => {
             if(err) console.log(err)
             res.send(results)
@@ -21,18 +33,40 @@ module.exports = (app)=>{
         );
       });
      
-      app.get('/fornecedores/:id_fornecedor', (req, res) => {
+      rotas.get('/fornecedores_byid/:id_fornecedor', (req, res) => {
         var id_fornecedor = req.params.id_fornecedor
         connection.query(
           `select * from fornecedor where id_fornecedor = ${id_fornecedor}`,
           (err, results, fields) => {
             if(err) console.log(err)
-            res.send(results)
-          });
+            console.log(results)
+          var resultado= {}
+          if(results.length > 0){
+            resultado.id_fornecedor=results[0].id_fornecedor
+            resultado.razao=results[0].razao
+            resultado.cpf_cnpj=results[0].cpf_cnpj
+            resultado.contato=results[0].contato
+            resultado.logradouro=results[0].logradouro
+            resultado.cidade=results[0].cidade
+            resultado.uf=results[0].uf
+          }
+          res.send(resultado)
+          }
+          );
       });
      
+      rotas.post('/fornecedores_del/:id_fornecedor', (req, res) => {
+        var id_fornecedor=req.params.id_fornecedor;
+        connection.query(
+          `delete from fornecedor where id_fornecedor = ${id_fornecedor}`,
+          (err, results, fields) => {
+            if(err) console.log(err)
+            res.send(results)
+          }
+        );
+      });
     
-      app.post('/fornecedores',(req,res)=>{
+      rotas.post('/fornecedores',(req,res)=>{
         var razao = req.body.razao
         var cpf_cnpj = req.body.cpf_cnpj
         var contato = req.body.contato
@@ -46,8 +80,8 @@ module.exports = (app)=>{
     
        
         connection.query(sql, (erro, resultado)=>{
-          var caminhoTemp =req.files.logo.path;
-          var caminhoFinal = `./uploads/logos/${resultado.insertId}.png`;
+          var caminhoTemp =req.files.avatar.path;
+          var caminhoFinal = `./uploads/fornecedores/${resultado.insertId}.png`;
       
           if(erro) res.send(erro)
           fs.copyFile(caminhoTemp,caminhoFinal,
@@ -58,8 +92,8 @@ module.exports = (app)=>{
         });
       });
     
-      app.patch('/fornecedores/:id_fornecedor', (req, res) => {
-        const id_fornecedor = req.params.id_fornecedor;
+      rotas.patch('/fornecedores_byid/:id_fornecedor', (req, res) => {
+        const iDfornecedor = req.params.id_fornecedor;
         var razao = req.body.razao
         var contato = req.body.contato
         var logradouro = req.body.logradouro
@@ -67,7 +101,7 @@ module.exports = (app)=>{
         var uf = req.body.uf
     
         var sql = `UPDATE fornecedor SET razao=?, contato=?, logradouro=?, cidade=?, uf=? WHERE id_fornecedor = ?`;
-        connection.query(sql, [razao,contato,logradouro,cidade,uf,id_fornecedor], (error, result) => {
+        connection.query(sql, [razao,contato,logradouro,cidade,uf,iDfornecedor], (error, result) => {
           if (error) {
             console.error('Erro ao atualizar o fornecedor:', error);
             res.status(500).json({ error: 'Erro ao atualizar o fornecedor.' });
