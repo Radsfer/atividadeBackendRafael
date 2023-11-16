@@ -64,15 +64,35 @@ module.exports = (app) => {
   });
 
   rotas.post('/fornecedores_del/:id_fornecedor', (req, res) => {
-    var id_fornecedor = req.params.id_fornecedor;
+    const id_fornecedor = req.params.id_fornecedor;
+  
+    // Exclua o fornecedor do banco de dados
     connection.query(
-      `delete from fornecedor where id_fornecedor = ${id_fornecedor}`,
+      `DELETE FROM fornecedor WHERE id_fornecedor = ${id_fornecedor}`,
       (err, results, fields) => {
-        if (err) console.log(err)
-        res.send(results)
+        if (err) {
+          console.log(err);
+          res.status(500).json({ error: 'Erro ao excluir o fornecedor.' });
+          return;
+        }
+  
+        // Se o fornecedor foi excluído com sucesso, exclua o arquivo de imagem
+        const imagePath = `./uploads/fornecedores/${id_fornecedor}.png`;
+  
+        fs.unlink(imagePath, (err) => {
+          if (err) {
+            console.log(err);
+            res.status(500).json({ error: 'Erro ao excluir o arquivo de imagem.' });
+          } else {
+            console.log('Fornecedor excluído com sucesso, incluindo a imagem.');
+            res.status(200).json({ message: 'Fornecedor excluído com sucesso.' });
+          }
+        });
       }
     );
   });
+  
+  
 
   rotas.post('/fornecedores', (req, res) => {
     var razao = req.body.razao
