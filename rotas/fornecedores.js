@@ -1,5 +1,8 @@
 const express = require("express");
 const fs= require("fs");  //da uma olhada na documentação no npm.
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const path = require('path');
 
 
 const connection = require("../config/database");
@@ -31,6 +34,11 @@ module.exports = (app)=>{
             res.send(results)
           }
         );
+      });
+      rotas.get('/uploads/fornecedores/:imageName', (req, res) => {
+        const imageName = req.params.imageName;
+        const imagePath = path.join(__dirname, '../uploads/fornecedores', imageName);
+        res.sendFile(imagePath);
       });
      
       rotas.get('/fornecedores_byid/:id_fornecedor', (req, res) => {

@@ -1,5 +1,8 @@
 const express = require("express");
 const moment = require("moment");
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const path = require('path');
 
 const fs= require("fs");  //da uma olhada na documentação no npm.
 
@@ -35,7 +38,13 @@ module.exports = (app)=>{
           }
         );
       })
-      
+
+      app.get('/uploads/clientes/:imageName', (req, res) => {
+        const imageName = req.params.imageName;
+        const imagePath = path.join(__dirname, '../uploads/clientes', imageName);
+        res.sendFile(imagePath);
+      });
+
       rotas.get('/clientes_byid/:id_cliente', (req, res) => {
         var id_cliente = req.params.id_cliente 
         connection.query(
@@ -107,7 +116,7 @@ module.exports = (app)=>{
         );
       })
       
-      rotas.post('/clientes',(req,res)=>{
+      rotas.post('/clientes', upload.single('avatar'),(req,res)=>{
         var nome = req.body.nome
         var sobrenome = req.body.sobrenome
         var email = req.body.email
